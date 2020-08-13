@@ -55,16 +55,16 @@ class DataApi extends GuzzleHttpRequest
         $response = -1;
         try {
             DB::beginTransaction();
-            /* $card         ->save();
+             $card         ->save();
              $client       ->save();
              $establisment ->save();
-             $pago_facil   ->save();*/
+             $pago_facil   ->save();
             $transaction = new Transaction();
             $transaction->id_establishment = $establisment->id;
             $transaction->id_card   = $card->id;
             $transaction->id_client = $client->id;
             $transaction->id_pago_facil = $pago_facil->id;
-            //$transaction  ->save();
+            $transaction  ->save();
             DB::commit();
             $response = $this->Transaction("/Wsrtransaccion/index/format/json?", $card, $client, $establisment, $pago_facil);
         } catch (ErrorException $e) {
