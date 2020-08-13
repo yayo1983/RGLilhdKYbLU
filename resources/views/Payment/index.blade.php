@@ -16,7 +16,7 @@
                             </div>
                             <div class="panel-body">
                                 <div class="table-container">
-                                    Trabajo con sistema de pago
+                                    Trabajo con API REST de Pago facil
                                 </div>
                             </div>
                         </div>
