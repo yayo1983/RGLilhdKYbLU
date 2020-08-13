@@ -12,19 +12,14 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-//Route::get('/', 'PaymentController@index')->name('payment.index');
-/*Route::get('/', function () {
-    return view('welcome');
-});
 
-Route::get('/home', function () {
-    return view('welcome');
-});*/
 Auth::routes();
 
 /**
- * Las routas que estan dentro del route::group solo serán mostradas si el usuario esta autenticado
+ * close session
  */
+Route::get('/logout', 'Auth\LoginController@logout')->name('logout');
+
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/', 'PaymentController@index')->name('payment.index');
 
@@ -38,4 +33,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/paymentstore', 'PaymentController@store')->name('payment.store');
 
     Route::get('/paymentshow', 'PaymentController@show')->name('payment.show');
+
+    Route::get('/paymenttest', 'PaymentController@indexText')->name('payment.indexText');
 });
