@@ -10,11 +10,22 @@ use App\Models\RequestPagoFacil;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\DB;
 
-class DataApi extends GuzzleHttpRequest
+class DataApi
 {
+    private $request;
+
+    public function __construct()
+    {
+        $this->request = RequestFactory::getRequest("guzzle");
+    }
+
     public function testcurl($api_credential){
-        $curl = new CurlAPI();
-        return $curl->request($api_credential);
+        $this->request = RequestFactory::getRequest("curl");
+        $response = $this->request->check("/Wsrtransaccion/index/format/json?",$api_credential);
+        if($response->{'rest'}->{'status'} = 'failed'){
+            $response = 'Error status: Fallido. '.$response->{'rest'}->{'response'} ->{'message'};
+        }
+        return $response;
     }
 
     public function doTransaction($api_credential, $request)
@@ -68,15 +79,24 @@ class DataApi extends GuzzleHttpRequest
             $transaction->id_card   = $card->id;
             $transaction->id_client = $client->id;
             $transaction->id_pago_facil = $pago_facil->id;
-            $transaction  ->save();
+            $transaction->save();
             DB::commit();
-            $response = $this->Transaction("/Wsrtransaccion/index/format/json?", $card, $client, $establisment, $pago_facil);
-            $response = $this->saveCheck($response);
+            $response = $this->request->Transaction("/Wsrtransaccion/index/format/json?", $card, $client, $establisment, $pago_facil);
+            if($response->{'WebServices_Transacciones'}->{'transaccion'}->{'status'} != 'failed'){
+                $response = $this->saveCheck($response);
+            }
         } catch (ErrorException $e) {
             DB::rollBack();
-            $reponse = 'Error status: ' . $e->getRequest() . " " . $e->getResponse();
+            $response = 'Error status: ' . $e->getRequest() . " " . $e->getResponse();
         }
         return $this->checkResponse($response);
+    }
+
+    public function doTransactionTest($api_credential)
+    {
+        $this->request = RequestFactory::getRequest("guzzle");
+        $response = $this->request->TransactiontTest("/Wsrtransaccion/index/format/json?",$api_credential);
+       return $this->checkResponse($response);
     }
 
     private function checkResponse($response)
@@ -89,7 +109,7 @@ class DataApi extends GuzzleHttpRequest
 
     public function checkTransaction($api_credential)
     {
-        $response = $this->Check("/Wsrtransaccion/index/format/json?", $api_credential);
+        $response = $this->request->Check("/Wsrtransaccion/index/format/json?", $api_credential);
         $response = $this->saveCheck($response);
         $response = $this->checkResponse($response);
         return $response;

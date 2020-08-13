@@ -3,22 +3,24 @@
 
 namespace App\Business;
 
-
-use League\CommonMark\Util\UrlEncoder;
-
-class CurlAPI
+class CurlAPI extends RequestAbstract
 {
+
+    /**
+     * CurlAPI constructor.
+     */
     public function __construct()
     {
+
     }
 
-    public function request($api_credential)
+    public function Check ($url, $api_credential)
     {
         //API URL
-        $url = 'https://sandbox.pagofacil.tech/Wsrtransaccion/index/format/json?';
+        $uri = 'https://sandbox.pagofacil.tech'.$url;
 
         //create a new cURL resource
-        $ch = curl_init($url);
+        $ch = curl_init($uri);
 
          //setup request to send json via POST
 
@@ -84,7 +86,8 @@ class CurlAPI
                 'httpUserAgent' => "Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0",
                 'ip' => "1.1.1.1"
             ]);
-
+        $data = response()->json(
+            $data, 200);
         $payload = json_encode(array("data" => $data));
         //$payload = urlencode (serialize($data)) ;
 
@@ -103,4 +106,6 @@ class CurlAPI
         curl_close($ch);
         return json_decode($result);
     }
+
+    public function Transaction($url, $card, $client, $establisment, $pago_facil){}
 }

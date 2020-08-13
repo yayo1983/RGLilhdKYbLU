@@ -13,11 +13,9 @@ use GuzzleHttp\Exception\InvalidArgumentException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\TransferException;
 
-class GuzzleHttpRequest
+class GuzzleHttpRequest extends RequestAbstract
 {
-    protected $client;
-
-    public function __construct(Client $client)
+    public function __construct(iRequest $request,Client $client)
     {
         $this->client = $client;
     }
@@ -56,7 +54,46 @@ class GuzzleHttpRequest
         return $this->callGuzzleClient($url, $data);
     }
 
-    /**   public function TransactionOtra($url, $card, $client, $establisment, $pago_facil)
+
+    public function TransactiontTest($url,$api_credential)
+    {
+        $data =
+            array ('method' => "transaccion"
+            /*    ,
+            'data' => [
+                'nombre' => 'Jon',
+                'apellidos' => 'Snow',
+                'numeroTarjeta' => "5513 5509 9409 2123",
+                'cvt' => "271",
+                'cp' => "48219",
+                'mesExpiracion' => "08",
+                'anyoExpiracion' => "22",
+                'monto' => "1599",
+                'idSucursal' => $api_credential['branch_key'],
+                'idUsuario' => $api_credential['user_key'],
+                'idServicio' => "3",
+                'email' => "pruebas@pagofacil.net",
+                'telefono' => "55751875",
+                'celular' => "5530996234",
+                'calleyNumero' => "Valle del Don",
+                'colonia' => "Del Valle",
+                'municipio' => "Tecamac",
+                'estado' => "Sonora",
+                'pais' => "México",
+                'idPedido' => 'TEST_TX', // $establisment->id
+                'param1' => '',
+                'param2' => '',
+                'param3' => '',
+                'param4' => '',
+                'param5' => '',
+                'httpUserAgent' => "Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0",
+                'ip' => "1.1.1.1"
+            ]*/
+            );
+        return $this->callGuzzleClientTest($url, $data);
+    }
+
+    /** public function TransactionOtra($url, $card, $client, $establisment, $pago_facil)
      * {
      * $response = $this->client->request('POST', $url, [
      * 'method' => $pago_facil->method,
@@ -96,8 +133,8 @@ class GuzzleHttpRequest
     public function Check($url, $api_credential)
     {
         $data = "method=transaccion&data[idPedido]=TEST_TX&
-                 data[idSucursal]=". $api_credential['branch_key'] . "&
-                 data[idUsuario]=". $api_credential['user_key'];
+                 data[idSucursal]=".$api_credential['branch_key']."&
+                 data[idUsuario]=".$api_credential['user_key'];
         return $this->callGuzzleClient($url, $data);
     }
 
@@ -105,8 +142,7 @@ class GuzzleHttpRequest
     {
         try {
             $response = $this->client->post($url.$data);
-        }
-        catch (ClientException|ServerException|BadResponseException|ConnectException|GuzzleException|
+        } catch (ClientException|ServerException|BadResponseException|ConnectException|GuzzleException|
         InvalidArgumentException|RequestException|TransferException|Exception $e) {
             return 'Error status: ' .$e->getRequest() . " " . $e->getResponse();
         }
@@ -117,4 +153,48 @@ class GuzzleHttpRequest
         }
     }
 
+    private function callGuzzleClientTest($url, $data)
+    {
+        try {
+            $response = $this->client->request('POST', $url, [
+                'method' => "transaccion",
+                'data'   => [
+                    'nombre'    => 'Jon',
+                    'apellidos' => 'Snow',
+                    'numeroTarjeta' => "5513 5509 9409 2123",
+                    'cvt' => "271",
+                    'cp' => "48219",
+                    'mesExpiracion' => "08",
+                    'anyoExpiracion' => "22",
+                    'monto' => "1599",
+                    'idSucursal' => "560d73f2a001c6d40dd805ab9ccafdeabf37cec3",
+                    'idUsuario' => "a2bce1f48cf7d11fae7d662d8bf7513355adf96f",
+                    'idServicio' => "3",
+                    'email' => "pruebas@pagofacil.net",
+                    'telefono' => "55751875",
+                    'celular' => "5530996234",
+                    'calleyNumero' => "Valle del Don",
+                    'colonia' => "Del Valle",
+                    'municipio' => "Tecamac",
+                    'estado' => "Sonora",
+                    'pais' => "México",
+                    'idPedido' => 'TEST_TX', // $establisment->id
+                    'param1' => '',
+                    'param2' => '',
+                    'param3' => '',
+                    'param4' => '',
+                    'param5' => '',
+                    'httpUserAgent' => "Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0",
+                    'ip' => "1.1.1.1"
+                ]]);
+        } catch (ClientException|ServerException|BadResponseException|ConnectException|GuzzleException|
+        InvalidArgumentException|RequestException|TransferException|Exception $e) {
+            return 'Error status: ' .$e->getRequest() . " " . $e->getResponse();
+        }
+        if ($response->getStatusCode() == 200) {
+            return json_decode($response->getBody()->getContents());
+        } else {
+            return 'Error status: ' . $response->getStatusCode() . ' ' . $response->getReasonPhrase();
+        }
+    }
 }

@@ -88,6 +88,14 @@ class PaymentController extends Controller
         return view('Payment.show', compact("data"));
     }
 
+    public function indexText()
+    {
+        //$data = $this->data->doTransactionTest($this->api_credential);
+        $data = $this->data->testcurl($this->api_credential);
+        //dd($data);
+        return view('Payment.show',compact('data'));
+    }
+
     /*public function defineLanguage()
     {
         $locale = "es";
