@@ -105,7 +105,8 @@ class GuzzleHttpRequest
     {
         try {
             $response = $this->client->post($url.$data);
-        } catch (ClientException|ServerException|BadResponseException|ConnectException|GuzzleException|
+        }
+        catch (ClientException|ServerException|BadResponseException|ConnectException|GuzzleException|
         InvalidArgumentException|RequestException|TransferException|Exception $e) {
             return 'Error status: ' .$e->getRequest() . " " . $e->getResponse();
         }

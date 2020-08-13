@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\DB;
 
 class DataApi extends GuzzleHttpRequest
 {
+    public function testcurl($api_credential){
+        $curl = new CurlAPI();
+        return $curl->request($api_credential);
+    }
 
     public function doTransaction($api_credential, $request)
     {
@@ -96,7 +100,6 @@ class DataApi extends GuzzleHttpRequest
     {
         if (is_object($response)) {
             try {
-                DB::beginTransaction();
                 $request_pago_facil = new RequestPagoFacil();
                 $data = $response->{'WebServices_Transacciones'}->{'transaccion'};
                 $error = "";
@@ -124,6 +127,7 @@ class DataApi extends GuzzleHttpRequest
                 $request_pago_facil->dataVal      = $dataVal;
                 $request_pago_facil->pf_message   = $data->{'pf_message'};
                 $request_pago_facil->status       = $data->{'status'};
+                DB::beginTransaction();
                 $request_pago_facil->save();
                 DB::commit();
             } catch (ErrorException $e) {
