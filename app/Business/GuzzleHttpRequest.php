@@ -24,11 +24,11 @@ class GuzzleHttpRequest
 
     public function Transaction($url, $card, $client, $establisment, $pago_facil)
     {
-        $data = "method=transaccion&
-                 data[idPedido]=TEST_TX&
+        $IP = explode(":", $establisment->ip_server);
+        $data = "method="               . $pago_facil->method."&
                  data[nombre]="         . $card->name_card_holder."&
-                 data[apellidos]="      . $card->last_name_card_holder. "&
-                 data[numeroTarjeta]="  . $card->card_number. "&
+                 data[apellidos]="      . $card->last_name_card_holder."&
+                 data[numeroTarjeta]="  . $card->card_number."&
                  data[cvt]="            . $card->cvt."&
                  data[cp]="             . $client->cp."&
                  data[mesExpiracion]="  . $card->expiration_month."&
@@ -36,7 +36,7 @@ class GuzzleHttpRequest
                  data[monto]="          . $establisment->amount_mxp."&
                  data[idSucursal]="     . $establisment->id_branch_office."&
                  data[idUsuario]="      . $establisment->id_user_company."&
-                 data[idServicio]="     . $card->name_card_holder."&
+                 data[idServicio]="     . $pago_facil->id_service."&
                  data[email]="          . $client->email."&
                  data[telefono]="       . $client->telephone."&
                  data[celular]="        . $client->cellular."&
@@ -45,13 +45,14 @@ class GuzzleHttpRequest
                  data[municipio]="      . $client->municipality."&
                  data[estado]="         . $client->state."&
                  data[pais]="           . $client->country."&
+                 data[idPedido]=TEST_TX&
                  data[param1]="         . $establisment->param1."&
                  data[param2]="         . $establisment->param2."&
                  data[param3]="         . $establisment->param3."&
                  data[param4]="         . $establisment->param4."&
                  data[param5]="         . $establisment->param5."&
                  data[httpUserAgent]="  . $establisment->http_user_agent."&
-                 data[ip]="             . $establisment->ip_server;
+                 data[ip]="             . $IP[0];
         return $this->callGuzzleClient($url, $data);
     }
 
@@ -95,8 +96,8 @@ class GuzzleHttpRequest
     public function Check($url, $api_credential)
     {
         $data = "method=transaccion&data[idPedido]=TEST_TX&
-                 data[idSucursal]=" . $api_credential['branch_key'] . "&
-                 data[idUsuario]=" . $api_credential['user_key'];
+                 data[idSucursal]=". $api_credential['branch_key'] . "&
+                 data[idUsuario]=". $api_credential['user_key'];
         return $this->callGuzzleClient($url, $data);
     }
 

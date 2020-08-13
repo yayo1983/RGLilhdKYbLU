@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Business;
 
 use App\Models\Card;
@@ -59,6 +58,7 @@ class DataApi extends GuzzleHttpRequest
              $client       ->save();
              $establisment ->save();
              $pago_facil   ->save();
+
             $transaction = new Transaction();
             $transaction->id_establishment = $establisment->id;
             $transaction->id_card   = $card->id;
@@ -67,6 +67,7 @@ class DataApi extends GuzzleHttpRequest
             $transaction  ->save();
             DB::commit();
             $response = $this->Transaction("/Wsrtransaccion/index/format/json?", $card, $client, $establisment, $pago_facil);
+            $response = $this->saveCheck($response);
         } catch (ErrorException $e) {
             DB::rollBack();
             $reponse = 'Error status: ' . $e->getRequest() . " " . $e->getResponse();
